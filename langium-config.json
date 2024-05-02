@@ -1,0 +1,15 @@
+{
+    "projectName": "Sysy2022",
+    "languages": [{
+        "id": "sysy-2022",
+        "grammar": "src/language/sysy-2022.langium",
+        "fileExtensions": [".Sysy2022"],
+        "textMate": {
+            "out": "syntaxes/sysy-2022.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/sysy-2022.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
