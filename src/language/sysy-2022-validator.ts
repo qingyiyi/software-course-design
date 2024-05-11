@@ -9,7 +9,7 @@ export function registerValidationChecks(services: Sysy2022Services) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.Sysy2022Validator;
     const checks: ValidationChecks<Sysy2022AstType> = {
-        Person: validator.checkPersonStartsWithCapital
+        //Person: validator.checkPersonStartsWithCapital
     };
     registry.register(checks, validator);
 }
