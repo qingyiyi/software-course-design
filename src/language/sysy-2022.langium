@@ -13,7 +13,7 @@ Greeting:
 //? ***************************************************/
 
 CompUnit: 
-    (Decl | FuncDef);
+    ( FuncDef | Decl );
 
 Decl: 
     ConstDecl | VarDecl;
@@ -37,7 +37,7 @@ InitVal:
     Exp | '{' ( InitVal ( ',' InitVal )* )? '}';
 
 FuncDef: 
-    functype=FuncType name=Ident '(' (FuncFParams)? ')' Block;
+    functype=FuncType/*('int'|'void'|'float')*/ name=Ident '(' (FuncFParams)? ')' Block;
 
 FuncFParams: 
     FuncFParam ( ',' FuncFParam )*;
