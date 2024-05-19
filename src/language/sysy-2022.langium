@@ -13,22 +13,27 @@ Greeting:
 //? ***************************************************/
 
 CompUnit: 
-    ( FuncDef | Decl );
+    ( Temp /*(FuncDef | VarDecl)*/ /*| ConstDecl*/  /*Decl*/);
 
-Decl: 
-    ConstDecl | VarDecl;
+Temp:
+    ('int'|'float') (FuncDef | VarDecl) | 'void' FuncDef | ConstDecl;
+
+
+
+//Decl: 
+//    ConstDecl | VarDecl;
 
 ConstDecl:
-    'const' btype=BType ConstDef (',' ConstDef)* ';';
+    'const' /*btype=BType*/('int' | 'float') ConstDef (',' ConstDef)* ';';
 
-ConstDef: 
+ConstDef:  
     name=Ident ('[' ConstExp ']')* '=' ConstInitVal;
 
 ConstInitVal: 
     ConstExp | '{' ( ConstInitVal (',' ConstInitVal)* )? '}';
 
 VarDecl: 
-    btype=BType VarDef ( ',' VarDef )* ';';
+    /*btype=BType*/ VarDef ( ',' VarDef )* ';';
 
 VarDef: 
     name=Ident ( '[' ConstExp ']' )* | name=Ident ( '[' ConstExp ']' )* '=' InitVal;
@@ -37,19 +42,19 @@ InitVal:
     Exp | '{' ( InitVal ( ',' InitVal )* )? '}';
 
 FuncDef: 
-    functype=FuncType/*('int'|'void'|'float')*/ name=Ident '(' (FuncFParams)? ')' Block;
+    /*functype=FuncType*/ /*('int'|'void'|'float')*/ name=Ident '(' (FuncFParams)? ')' Block;
 
 FuncFParams: 
     FuncFParam ( ',' FuncFParam )*;
 
 FuncFParam: 
-    btype=BType name=Ident ('[' ']' ( '[' Exp ']' )*)?;
+    /*btype=BType*/('int' | 'float') name=Ident ('[' ']' ( '[' Exp ']' )*)?;
 
 fragment Block: 
     '{' ( BlockItem )* '}';
 
 BlockItem: 
-    Decl | Stmt;
+    ConstDecl | ('int'|'float') VarDecl /*Decl*/ | Stmt;
 
 Stmt: 
     LVal '=' Exp ';' 
@@ -68,7 +73,7 @@ Cond:
     LOrExp;
 
 LVal: 
-    name=Ident ('[' Exp ']')*;
+    (Lname=Ident/*[Temp:Ident]*/) ('[' Exp ']')*;
 
 PrimaryExp: 
     '(' Exp ')' | LVal | Numbers;
