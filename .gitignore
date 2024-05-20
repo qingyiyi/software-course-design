@@ -3,6 +3,7 @@
 !.vscode/launch.json
 !.vscode/tasks.json
 out/
+node_modules/
 src/language/generated/
 static/bundle/
 static/monaco-editor-workers/
