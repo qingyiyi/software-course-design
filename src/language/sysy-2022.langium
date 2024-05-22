@@ -36,7 +36,7 @@ VarDecl:
     /*btype=BType*/ VarDef ( ',' VarDef )* ';';
 
 VarDef: 
-    name=Ident ( '[' ConstExp ']' )* | name=Ident ( '[' ConstExp ']' )* '=' InitVal;
+    /*name=Ident ( '[' ConstExp ']' )* |*/ name=Ident ( '[' ConstExp ']' )* ('=' InitVal)?;
 
 InitVal: 
     Exp | '{' ( InitVal ( ',' InitVal )* )? '}';
@@ -73,7 +73,7 @@ Cond:
     LOrExp;
 
 LVal: 
-    (Lname=Ident/*[Temp:Ident]*/) ('[' Exp ']')*;
+    (LVarname=[VarDef:Ident] /*Ident*/) ('[' Exp ']')*;
 
 PrimaryExp: 
     '(' Exp ')' | LVal | Numbers;
@@ -82,7 +82,7 @@ Numbers:
     intnumber=IntConst | floatnumber=FloatConst;
 
 UnaryExp: 
-    PrimaryExp | name=Ident '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
+    PrimaryExp | Funcname=[FuncDef:Ident] '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
 
 FuncRParams: 
     Exp ( ',' Exp )*;

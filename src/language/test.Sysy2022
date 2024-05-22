@@ -1,0 +1,17 @@
+void b()
+{
+
+}
+float c()
+{
+    b();
+}
+
+int a()
+{
+    int ab;
+    float aa;
+    int ac;
+    ab = ;
+    aa;
+}
