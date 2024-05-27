@@ -1,17 +1,21 @@
-void b()
+int bb()
+{
+    //int bbb;
+    int cccc;
+    int a;
+    a = 1/0;
+    int a;
+    int cccc;
+}
+
+int cc()
 {
 
 }
-float c()
+
+int cc()
 {
-    b();
+
 }
 
-int a()
-{
-    int ab;
-    float aa;
-    int ac;
-    ab = ;
-    aa;
-}
+int cc = 0;

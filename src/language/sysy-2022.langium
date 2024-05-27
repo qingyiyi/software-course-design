@@ -4,7 +4,7 @@ grammar Sysy2022
 //    ( compUnit+=CompUnit )*;
 
 entry Model: 
-    ( compUnit+=CompUnit |person+=Person|greetings+=Greeting)*;
+    ( compUnit+=CompUnit | person+=Person | greetings+=Greeting )*;
 //? ***************************************************/
 Person:
     'person' name=Ident;
@@ -15,7 +15,7 @@ Greeting:
 CompUnit: 
     ( Temp /*(FuncDef | VarDecl)*/ /*| ConstDecl*/  /*Decl*/);
 
-Temp:
+fragment Temp:
     ('int'|'float') (FuncDef | VarDecl) | 'void' FuncDef | ConstDecl;
 
 
@@ -23,40 +23,40 @@ Temp:
 //Decl: 
 //    ConstDecl | VarDecl;
 
-ConstDecl:
+fragment ConstDecl:
     'const' /*btype=BType*/('int' | 'float') ConstDef (',' ConstDef)* ';';
 
-ConstDef:  
-    name=Ident ('[' ConstExp ']')* '=' ConstInitVal;
+fragment ConstDef:  
+    constvarname=Ident ('[' ConstExp ']')* '=' ConstInitVal;
 
-ConstInitVal: 
+fragment ConstInitVal: 
     ConstExp | '{' ( ConstInitVal (',' ConstInitVal)* )? '}';
 
-VarDecl: 
+fragment VarDecl: 
     /*btype=BType*/ VarDef ( ',' VarDef )* ';';
 
-VarDef: 
-    /*name=Ident ( '[' ConstExp ']' )* |*/ name=Ident ( '[' ConstExp ']' )* ('=' InitVal)?;
+fragment VarDef: 
+    varname=Ident ( '[' ConstExp ']' )* ('=' InitVal)? ; //| varname=Ident ( '[' ConstExp ']' )* '=' InitVal;
 
-InitVal: 
+fragment InitVal: 
     Exp | '{' ( InitVal ( ',' InitVal )* )? '}';
 
-FuncDef: 
-    /*functype=FuncType*/ /*('int'|'void'|'float')*/ name=Ident '(' (FuncFParams)? ')' Block;
+fragment FuncDef: 
+    /*functype=FuncType*/ /*('int'|'void'|'float')*/ funcname=Ident '(' (FuncFParams)? ')' Block;
 
-FuncFParams: 
+fragment FuncFParams: 
     FuncFParam ( ',' FuncFParam )*;
 
-FuncFParam: 
-    /*btype=BType*/('int' | 'float') name=Ident ('[' ']' ( '[' Exp ']' )*)?;
+fragment FuncFParam: 
+    /*btype=BType*/('int' | 'float') funcparamname=Ident ('[' ']' ( '[' Exp ']' )*)?;
 
 fragment Block: 
-    '{' ( BlockItem )* '}';
+    '{' ( blockItem+=BlockItem )* '}';
 
 BlockItem: 
     ConstDecl | ('int'|'float') VarDecl /*Decl*/ | Stmt;
 
-Stmt: 
+fragment Stmt: 
     LVal '=' Exp ';' 
     | (Exp)? ';' 
     | Block 
@@ -66,83 +66,83 @@ Stmt:
     | 'continue' ';' 
     | 'return' (Exp)? ';' ;
 
-Exp: 
+fragment Exp: 
     AddExp;
 
-Cond: 
+fragment Cond: 
     LOrExp;
 
-LVal: 
-    (LVarname=[VarDef:Ident] /*Ident*/) ('[' Exp ']')*;
+fragment LVal: 
+    LVarname=Ident ('[' Exp ']')*;
 
-PrimaryExp: 
+fragment PrimaryExp: 
     '(' Exp ')' | LVal | Numbers;
 
-Numbers: 
+fragment Numbers: 
     intnumber=IntConst | floatnumber=FloatConst;
 
-UnaryExp: 
-    PrimaryExp | Funcname=[FuncDef:Ident] '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
+fragment UnaryExp: 
+    PrimaryExp | Funcname=Ident '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
 
-FuncRParams: 
+fragment FuncRParams: 
     Exp ( ',' Exp )*;
 
 //MulExp:
 //    UnaryExp | MulExp ('*' | '/' | '%') UnaryExp;
 
-MulExp:
+fragment MulExp:
     UnaryExp MulExp_temp;
 
-MulExp_temp:
-    (('*' | '/' | '%') UnaryExp MulExp_temp)?;
+fragment MulExp_temp:
+    (mulop=('*' | '/' | '%') UnaryExp MulExp_temp)?;
 
 //AddExp: 
 //    MulExp | AddExp ('+' | '-') MulExp;
 
-AddExp:
+fragment AddExp:
     MulExp AddExp_temp;
 
-AddExp_temp:
+fragment AddExp_temp:
     (('+' | '-') MulExp AddExp_temp)?;
 
 //RelExp: 
 //    AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp;
 
-RelExp:
+fragment RelExp:
     AddExp RelExp_temp;
 
-RelExp_temp:
+fragment RelExp_temp:
     (('<' | '>' | '<=' | '>=') AddExp RelExp_temp)?;
 
 //EqExp: 
 //    RelExp | EqExp ('==' | '!=') RelExp;
 
-EqExp:
+fragment EqExp:
     RelExp EqExp_temp;
 
-EqExp_temp:
+fragment EqExp_temp:
     (('==' | '!=') RelExp EqExp_temp)?;
 
 //LAndExp: 
 //    EqExp | LAndExp '&&' EqExp;
 
-LAndExp:
+fragment LAndExp:
     EqExp LAndExp_temp;
 
-LAndExp_temp:
+fragment LAndExp_temp:
     ('&&' EqExp LAndExp_temp)?;
 
 
 //LOrExp: 
 //    LAndExp | LOrExp '||' LAndExp;
 
-LOrExp:
+fragment LOrExp:
     LAndExp LOrExp_temp;
 
-LOrExp_temp:
+fragment LOrExp_temp:
     ('||' LAndExp LOrExp_temp)?;
 
-ConstExp: 
+fragment ConstExp: 
     AddExp;
 
 
