@@ -9,11 +9,9 @@ export function registerValidationChecks(services: Sysy2022Services) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.Sysy2022Validator;
     const checks: ValidationChecks<Sysy2022AstType> = {
-        //Person: validator.checkPersonStartsWithCapital,
         Model: validator.ModelTotoalValidator,
         CompUnit: validator.CompUnitTotoalValidator,
         BlockItem: validator.BlockItemTotoalValidator
-        //MulExp_temp: validator.checkifzeroasdividend
     };
     registry.register(checks, validator);
 }
@@ -95,10 +93,10 @@ export class Sysy2022Validator {
         })
         unit.funcdef?.blockItem.forEach(d =>
         {
-            if(d.Funcname)
+            if(d.funcname)
             {
-                let description = var_attribute_Map.get(d.Funcname);
-                accept('info', `${description}`, {node: d, property: 'Funcname'});
+                let description = var_attribute_Map.get(d.funcname);
+                accept('info', `${description}`, {node: d, property: 'funcname'});
             }
         })
     }
@@ -157,14 +155,6 @@ export class Sysy2022Validator {
                 }
         })
     }
-
-    // checkifzeroasdividend(mulexp: MulExp_temp, accept: ValidationAcceptor): void {
-    //     if(mulexp.mulop == '/')
-    //     {
-    //         if(!mulexp.numbers)
-    //             accept('error', '0 cannot be dividend', {node: mulexp, property: 'numbers'});
-    //     }
-    // }
 
 
     checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {

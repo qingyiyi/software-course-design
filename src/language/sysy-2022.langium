@@ -46,13 +46,13 @@ fragment FuncFParams:
     FuncFParam ( ',' FuncFParam )*;
 
 fragment FuncFParam: 
-    /*btype=BType*/('int' | 'float') funcparamname=Ident ('[' ']' ( '[' Exp ']' )*)?;
+    /*btype=BType*/('int' | 'float') Ident ('[' ']' ( '[' Exp ']' )*)?;
 
 fragment Block: 
     '{' ( blockItem+=BlockItem )* '}';
 
 BlockItem: 
-    ConstDecl | btype=('int'|'float') VarDecl /*Decl*/ | Stmt;
+    ConstDecl | btype=('int'|'float') VarDecl | Stmt;
 
 fragment Stmt: 
     LVal '=' Exp ';' 
@@ -80,7 +80,7 @@ fragment Numbers:
     intnumber=IntConst | floatnumber=FloatConst;
 
 fragment UnaryExp: 
-    PrimaryExp | Funcname=Ident '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
+    PrimaryExp | funcname=Ident '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
 
 fragment FuncRParams: 
     Exp ( ',' Exp )*;

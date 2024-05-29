@@ -17,7 +17,7 @@ int bb()
     return 0;
 }
 
-int cc()
+float cc()
 {
     bb();
     cc();
