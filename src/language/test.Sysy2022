@@ -8,7 +8,7 @@ int bb()
     int cccc;
     float c;
     int a;
-    a = 1/0;
+    a = 0;
     cccc = 2;
     c = 1;
     am = a + c;
