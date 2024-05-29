@@ -48,7 +48,7 @@ fragment FuncFParams:
     FuncFParam ( ',' FuncFParam )*;
 
 fragment FuncFParam: 
-    /*btype=BType*/('int' | 'float') funcparamname=Ident ('[' ']' ( '[' Exp ']' )*)?;
+    /*btype=BType*/paramtype+=('int' | 'float') funcparamname=Ident ('[' ']' ( '[' Exp ']' )*)?;
 
 fragment Block: 
     '{' ( blockItem+=BlockItem )* '}';
@@ -66,7 +66,7 @@ fragment Stmt:
     | 'continue' ';' 
     | 'return' (Exp)? ';' ;
 
-fragment Exp: 
+Exp: 
     AddExp;
 
 fragment Cond: 
@@ -81,11 +81,11 @@ fragment PrimaryExp:
 fragment Numbers: 
     intnumber=IntConst | floatnumber=FloatConst;
 
-fragment UnaryExp: 
-    PrimaryExp | Funcname=Ident '(' (FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
+UnaryExp: 
+    PrimaryExp | unaryFuncname=Ident '(' unaryFuncRParams=(FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
 
-fragment FuncRParams: 
-    Exp ( ',' Exp )*;
+FuncRParams: 
+    unaryFuncParamNums+=Exp ( ',' unaryFuncParamNums+=Exp )*;
 
 //MulExp:
 //    UnaryExp | MulExp ('*' | '/' | '%') UnaryExp;
