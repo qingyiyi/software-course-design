@@ -1,21 +1,38 @@
+int a;
+int b;
+float c;
+
 int bb()
 {
     //int bbb;
     int cccc;
+    float c;
     int a;
     a = 1/0;
+    cccc = 2;
+    c = 1;
+    am = a + c;
     int a;
     int cccc;
+    return 0;
 }
 
 int cc()
 {
-
+    bb();
+    cc();
+    return 0;
+}
+int ca()
+{
+    
 }
 
 int cc()
 {
-
+    int a;
+    int a;
+    a=0;
 }
 
 int cc = 0;
