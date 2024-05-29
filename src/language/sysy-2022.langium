@@ -16,9 +16,7 @@ CompUnit:
     ( Temp /*(FuncDef | VarDecl)*/ /*| ConstDecl*/  /*Decl*/);
 
 fragment Temp:
-    ('int'|'float') (FuncDef | VarDecl) | 'void' FuncDef | ConstDecl;
-
-
+    btype='int' funcdef=FuncDef | btype='float' funcdef=FuncDef | btype='void' funcdef=FuncDef | betype='int' VarDecl | btype='float' VarDecl | ConstDecl;
 
 //Decl: 
 //    ConstDecl | VarDecl;
@@ -33,28 +31,28 @@ fragment ConstInitVal:
     ConstExp | '{' ( ConstInitVal (',' ConstInitVal)* )? '}';
 
 fragment VarDecl: 
-    /*btype=BType*/ VarDef ( ',' VarDef )* ';';
+    /*btype=BType*/ vardef=VarDef ( ',' vardef=VarDef )* ';';
 
-fragment VarDef: 
+/*fragment*/ VarDef: 
     varname=Ident ( '[' ConstExp ']' )* ('=' InitVal)? ; //| varname=Ident ( '[' ConstExp ']' )* '=' InitVal;
 
 fragment InitVal: 
     Exp | '{' ( InitVal ( ',' InitVal )* )? '}';
 
-fragment FuncDef: 
+FuncDef: 
     /*functype=FuncType*/ /*('int'|'void'|'float')*/ funcname=Ident '(' (FuncFParams)? ')' Block;
 
 fragment FuncFParams: 
     FuncFParam ( ',' FuncFParam )*;
 
 fragment FuncFParam: 
-    /*btype=BType*/paramtype+=('int' | 'float') funcparamname=Ident ('[' ']' ( '[' Exp ']' )*)?;
+    /*btype=BType*/paramtype+=('int' | 'float') Ident ('[' ']' ( '[' Exp ']' )*)?;
 
 fragment Block: 
     '{' ( blockItem+=BlockItem )* '}';
 
 BlockItem: 
-    ConstDecl | ('int'|'float') VarDecl /*Decl*/ | Stmt;
+    unaryFuncname=[UnaryExp:Ident] ConstDecl | btype=('int'|'float') VarDecl | Stmt;
 
 fragment Stmt: 
     LVal '=' Exp ';' 
@@ -64,7 +62,7 @@ fragment Stmt:
     | 'while' '(' Cond ')' Stmt
     | 'break' ';' 
     | 'continue' ';' 
-    | 'return' (Exp)? ';' ;
+    | char_return='return' (Exp)? ';' ;
 
 Exp: 
     AddExp;
@@ -82,7 +80,7 @@ fragment Numbers:
     intnumber=IntConst | floatnumber=FloatConst;
 
 UnaryExp: 
-    PrimaryExp | unaryFuncname=Ident '(' unaryFuncRParams=(FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
+    PrimaryExp | unaryFuncname=Ident '(' (unaryFuncRParams=FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
 
 FuncRParams: 
     unaryFuncParamNums+=Exp ( ',' unaryFuncParamNums+=Exp )*;
