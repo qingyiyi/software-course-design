@@ -11,7 +11,7 @@ int bb()
     a = 0;
     cccc = 2;
     c = 1;
-    am = a + c;
+    //am = a + c;
     int a;
     int cccc;
     return 0;
