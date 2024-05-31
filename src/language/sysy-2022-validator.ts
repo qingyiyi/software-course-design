@@ -225,13 +225,13 @@ export class Sysy2022Validator {
                 // 匹配参数类型
                 // ******************** to do **********************
                 else{
-                    // for (let i = 0; i < params.length; i++) {
-                    //     if(params[i]=='int'){
-                    //         if(unit.unaryFuncRParams.unaryFuncParamNums){
-                    //             accept('error', `this is a debug info:'${unit.unaryFuncRParams.unaryFuncParamNums[i].toLocaleString}'`, {node: unit, property: 'unaryFuncRParams'});
-                    //         }
-                    //     }
-                    // }
+                    for (let i = 0; i < params.length; i++) {
+                        if(params[i]=='int'){
+                            if(unit.unaryFuncRParams.unaryFuncParamNums[i]&&(unit.unaryFuncRParams.unaryFuncParamNums[i].toString()).indexOf('.')!==-1){
+                                accept('error', `不匹配的参数类型！需要传入int类型的参数 debuginfo:current params:'${unit.unaryFuncRParams.unaryFuncParamNums[i].toString()}'`, {node: unit, property: 'unaryFuncRParams'});
+                            }
+                        }
+                    }
                 }
             }
             // 调用时无参数

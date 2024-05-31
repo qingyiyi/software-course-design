@@ -52,7 +52,7 @@ fragment Block:
     '{' ( blockItem+=BlockItem )* '}';
 
 BlockItem: 
-    (unaryFuncname=[UnaryExp:Ident])? ConstDecl | btype=('int'|'float') VarDecl |  Stmt;
+    ConstDecl |  btype=('int'|'float') VarDecl |(unaryFuncname=[UnaryExp:Ident])? Stmt;
 
 fragment Stmt: 
     LVal '=' Exp ';' 
@@ -77,7 +77,10 @@ fragment PrimaryExp:
     '(' Exp ')' | LVal | Numbers;
 
 fragment Numbers: 
-    intnumber=IntConst | floatnumber=FloatConst;
+    intnumber=IntConst (floatpart=FloatPart)?;
+
+// fragment Numbers: 
+//     floatnumber=FloatConst | intnumber=IntConst;
 
 UnaryExp: 
     PrimaryExp | unaryFuncname=Ident '(' (unaryFuncRParams=FuncRParams)? ')' | ('+'|'-'|'!') UnaryExp;
@@ -147,7 +150,8 @@ fragment ConstExp:
 
 //terminal UnaryOp: /'+'|'-'|'!'/;
 terminal IntConst returns number: /[0-9]+/;
-terminal FloatConst returns number: /[0-9]+.[0-9]*/;
+terminal FloatConst returns number: /[0-9]+\.[0-9]*/;
+terminal FloatPart returns number: /\.[0-9]*/;
 
 terminal BType:/int|float/;
 terminal FuncType:/void|int|float/;
