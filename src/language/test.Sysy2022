@@ -40,13 +40,27 @@ int a()
 
 int b;
 
+int bb(int m, int n)
+{
+    //int bbb;
+    int cccc;
+    float c;
+    int a;
+    a = 0;
+    cccc = 2;
+    c = 1;
+    //am = a + c;
+    int a;
+    int cccc;
+    return 0;
+}
 
 //函数调用参数列表是否一致&悬浮提示
 int c()
 {
-    int it;
-    float ft;
-    h();
-    h(it,ft);
-    it = 1;
+    const int kkk = 0;
+    int m, n;
+    bb(m, n);
+    cc();
+    return 0;
 }
