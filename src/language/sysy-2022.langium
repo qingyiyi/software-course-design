@@ -52,7 +52,7 @@ fragment Block:
     '{' ( blockItem+=BlockItem )* '}';
 
 BlockItem: 
-    unaryFuncname=[UnaryExp:Ident] ConstDecl | btype=('int'|'float') VarDecl | Stmt;
+    (unaryFuncname=[UnaryExp:Ident])? ConstDecl | btype=('int'|'float') VarDecl |  Stmt;
 
 fragment Stmt: 
     LVal '=' Exp ';' 

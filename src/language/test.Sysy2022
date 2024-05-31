@@ -2,7 +2,7 @@ int a;
 int b;
 float c;
 
-int bb()
+int bb(int m, int n)
 {
     //int bbb;
     int cccc;
@@ -19,7 +19,9 @@ int bb()
 
 float cc()
 {
-    bb();
+    const int kkk = 0;
+    int m, n;
+    bb(m, n);
     cc();
     return 0;
 }
