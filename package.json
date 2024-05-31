@@ -78,6 +78,12 @@
                 "scopeName": "source.sysy-2022",
                 "path": "syntaxes/sysy-2022.tmLanguage.json"
             }
+        ],
+        "snippets": [
+            {
+                "language": "sysy-2022",
+                "path": "./src/language/sysy-2022-completion.json"
+            }
         ]
     },
     "activationEvents": [

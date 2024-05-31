@@ -1,38 +1,52 @@
+//语法高亮
+//联想输入、变量定义
+
 int a;
+float aa;
+const float s=1.1;
+//const int ss;
+
+int a0d_;
+
+//函数定义
+int h(int a,float aa)
+{
+
+}
+
+//int hs();
+
+//基本语句定义
+int b()
+{
+    if(1<2)
+    {
+
+    }
+    else {}
+
+    while(1)
+    {
+        continue;
+    }
+    return 1;
+}
+
+//函数名变量名冲突检测
+int a()
+{
+
+}
+
 int b;
-float c;
 
-int bb()
-{
-    //int bbb;
-    int cccc;
-    float c;
-    int a;
-    a = 0;
-    cccc = 2;
-    c = 1;
-    //am = a + c;
-    int a;
-    int cccc;
-    return 0;
-}
 
-float cc()
+//函数调用参数列表是否一致&悬浮提示
+int c()
 {
-    bb();
-    cc();
-    return 0;
+    int it;
+    float ft;
+    h();
+    h(it,ft);
+    it = 1;
 }
-int ca()
-{
-    
-}
-
-int cc()
-{
-    int a;
-    int a;
-    a=0;
-}
-
-int cc = 0;
