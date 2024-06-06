@@ -1,44 +1,3 @@
-//语法高亮
-//联想输入、变量定义
-
-int a;
-float aa;
-const float s=1.1;
-//const int ss;
-
-int a0d_;
-
-//函数定义
-int h(int a,float aa)
-{
-
-}
-
-//int hs();
-
-//基本语句定义
-int b()
-{
-    if(1<2)
-    {
-
-    }
-    else {}
-
-    while(1)
-    {
-        continue;
-    }
-    return 1;
-}
-
-//函数名变量名冲突检测
-int a()
-{
-
-}
-
-int b;
 
 int bb(int m, int n)
 {
@@ -46,21 +5,38 @@ int bb(int m, int n)
     int cccc;
     float c;
     int a;
-    a = 0;
+    //a = 0;
     cccc = 2;
     c = 1;
+    ccc =1 ;
     //am = a + c;
     int a;
     int cccc;
     return 0;
 }
 
-//函数调用参数列表是否一致&悬浮提示
-int c()
+
+
+float cc()
 {
+    int ccc = 0;
+    ccc = 1;
     const int kkk = 0;
     int m, n;
     bb(m, n);
     cc();
     return 0;
 }
+int ca()
+{
+    
+}
+
+int ccc()
+{
+    int a;
+    int a;
+    a=0;
+}
+
+int cc = 0;

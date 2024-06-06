@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import { Sysy2022AstType, Model, Person, CompUnit, BlockItem, FuncDef, UnaryExp} from './generated/ast.js';
+import { Sysy2022AstType, Model, Person, CompUnit, BlockItem, FuncDef, UnaryExp } from './generated/ast.js';
 import type { Sysy2022Services } from './sysy-2022-module.js';
 
 /**
@@ -20,6 +20,7 @@ export function registerValidationChecks(services: Sysy2022Services) {
 
 
 let var_attribute_Map = new Map();
+
 
 /**
  * Implementation of custom validations.
@@ -47,7 +48,6 @@ export class Sysy2022Validator {
     }
     BlockItemTotoalValidator(b:BlockItem, accept: ValidationAcceptor): void{
         this.gatherblockiteminfo(b, accept);
-        
     }
 
     gathervaribleinfo(unit:CompUnit, accept: ValidationAcceptor): void{
@@ -74,6 +74,48 @@ export class Sysy2022Validator {
                 //accept('warning', `${description}`, {node: unit, property: 'vardef'});
             }
         }
+
+        if(unit.funcdef)
+        {
+            let var_isused_Map = new Map();
+
+            //遍历3次，分别是收集变量，搜索是否使用，显示信息
+            unit.funcdef.blockItem.forEach(d =>{
+                if(d.vardef?.varname)
+                {
+                    let name = d.vardef?.varname;
+                    var_isused_Map.set(name, 1);
+                }
+            })
+
+            unit.funcdef.blockItem.forEach(d =>{
+                if(d.LVarname)
+                {
+                    let name = d.LVarname;
+                    if(var_isused_Map.get(name))
+                    {
+                        var_isused_Map.delete(name);
+                        var_isused_Map.set(name,2);
+                    }
+                    else
+                    {
+                        accept("error", `variable '${name}' is not declared in this scope`, {node: d, property:'LVarname'})
+                    }
+                }
+            })
+
+            unit.funcdef.blockItem.forEach(d =>{
+                if(d.vardef?.varname)
+                {
+                    let name = d.vardef?.varname;
+                    if(var_isused_Map.get(name) == 1)
+                    {
+                        accept("warning", "this varible is never used", {node: d.vardef, property: 'varname'})
+                    }
+                }
+            })
+        }
+
     }
 
     gatherblockiteminfo(b:BlockItem, accept: ValidationAcceptor): void {
@@ -88,10 +130,11 @@ export class Sysy2022Validator {
                 var_attribute_Map.set(name, description);
                 //accept('warning', `${description}`, {node: b, property: 'vardef'});
             }
+
         }
     }
 
-    showvaribleinfo(unit:CompUnit/*b:BlockItem*/, accept: ValidationAcceptor): void{
+    showvaribleinfo(unit:CompUnit, accept: ValidationAcceptor): void{
         unit.funcdef?.blockItem.forEach(d=>
         {
             if(d.LVarname)
@@ -118,7 +161,7 @@ export class Sysy2022Validator {
                 if(d.vardef.varname){
                     if (reported.has(d.vardef.varname)) 
                     {
-                        accept('error',  `Def has non-unique name '${d.vardef.varname}'.`,  {node: d, property: 'vardef'});
+                        accept('error',  `Def has non-unique name '${d.vardef.varname}'.`,  {node: d.vardef, property: 'varname'});
                     }
                     reported.add(d.vardef.varname);
                 }
@@ -134,7 +177,7 @@ export class Sysy2022Validator {
                     if(d.funcdef.funcname){
                         if (reported.has(d.funcdef.funcname)) 
                         {
-                            accept('error',  `Def has non-unique name '${d.funcdef.funcname}'.`,  {node: d, property: 'funcdef'});
+                            accept('error',  `Def has non-unique name '${d.funcdef.funcname}'.`,  {node: d.funcdef, property: 'funcname'});
                         }
                         reported.add(d.funcdef.funcname);
                     }
@@ -214,7 +257,7 @@ export class Sysy2022Validator {
             if(unit.unaryFuncRParams){
                 // 函数无参数
                 if(params==undefined){
-                    accept('error', `不匹配的参数数量!该函数无需传参`, {node: unit, property: 'unaryFuncRParams'});
+                    accept('error', `不匹配的参数数量! 该函数无需传参`, {node: unit, property: 'unaryFuncRParams'});
                     return;
                 }
                 let diaoparamsNumber:number=unit.unaryFuncRParams.unaryFuncParamNums.length;
@@ -228,7 +271,7 @@ export class Sysy2022Validator {
                     for (let i = 0; i < params.length; i++) {
                         if(params[i]=='int'){
                             if(unit.unaryFuncRParams.unaryFuncParamNums[i]&&(unit.unaryFuncRParams.unaryFuncParamNums[i].toString()).indexOf('.')!==-1){
-                                accept('error', `不匹配的参数类型！需要传入int类型的参数 debuginfo:current params:'${unit.unaryFuncRParams.unaryFuncParamNums[i].toString()}'`, {node: unit, property: 'unaryFuncRParams'});
+                                accept('error', `不匹配的参数类型! 需要传入int类型的参数 debuginfo:current params:'${unit.unaryFuncRParams.unaryFuncParamNums[i].toString()}'`, {node: unit, property: 'unaryFuncRParams'});
                             }
                         }
                     }
