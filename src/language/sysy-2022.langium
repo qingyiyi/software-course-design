@@ -92,7 +92,7 @@ FuncRParams:
 //    UnaryExp | MulExp ('*' | '/' | '%') UnaryExp;
 
 fragment MulExp:
-    UnaryExp MulExp_temp;
+    unaryExp=UnaryExp MulExp_temp;
 
 fragment MulExp_temp:
     (mulop=('*' | '/' | '%') UnaryExp MulExp_temp)?;

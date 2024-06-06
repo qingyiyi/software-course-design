@@ -32,7 +32,7 @@ const canshuMap = new Map();
 export class Sysy2022Validator {
     ModelTotoalValidator(m:Model, accept: ValidationAcceptor): void{
         this.checkifunique(m, accept);
-        //this.showvaribleinfo(m, accept);
+        this.checkiffuncused(m, accept);
         //this.gathervaribleinfo(m, accept);
     }
     FuncDefTotoalValidator(funcdef:FuncDef, accept: ValidationAcceptor): void{
@@ -49,6 +49,51 @@ export class Sysy2022Validator {
     }
     BlockItemTotoalValidator(b:BlockItem, accept: ValidationAcceptor): void{
         this.gatherblockiteminfo(b, accept);
+    }
+
+    checkiffuncused(m:Model, accept: ValidationAcceptor):void{
+
+        let func_isused_Map = new Map();
+
+        //搜集所有函数名
+        m.compUnit.forEach(d=>{
+            if(d.funcdef)
+            {
+                let name = d.funcdef.funcname;
+                func_isused_Map.set(name, 1);
+            }
+        })
+
+        //查看是否使用过
+        m.compUnit.forEach(d=>{
+            d.funcdef?.blockItem.forEach(item=>{
+                if(item.unaryExp?.unaryFuncname)
+                {
+                    let name = item.unaryExp.unaryFuncname;
+                    if(name != 'main')
+                    {
+                        if(func_isused_Map.get(name))
+                        {
+                            func_isused_Map.delete(name);
+                            func_isused_Map.set(name,2);
+                        }
+                    }
+                }
+            })
+        })
+
+        //对于没有使用的报错
+        m.compUnit.forEach(d=>{
+            if(d.funcdef)
+            {
+                let name = d.funcdef.funcname;
+                if(func_isused_Map.get(name) == 1)
+                {
+                    accept('warning', `function ${name} never used`, {node: d.funcdef, property:'funcname'});
+                }
+            }
+        })
+
     }
 
     gathervaribleinfo(unit:CompUnit, accept: ValidationAcceptor): void{
