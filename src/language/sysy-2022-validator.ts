@@ -138,9 +138,9 @@ export class Sysy2022Validator {
                 if(d.LVarname)
                 {
                     let name = d.LVarname;
-                    if(var_type_Map.get(name) != type)
+                    if(var_type_Map.get(name) && var_type_Map.get(name) != type)
                     {
-                        accept('error', `'${name}''s type is not suitable.`, {node:d, property:'blockItem'});
+                        accept('error', `variable ${name}'s type is not suitable.`, {node:d, property:'blockItem'});
                     }
                 }
             })
