@@ -87,7 +87,7 @@ export class Sysy2022Validator {
             if(d.funcdef)
             {
                 let name = d.funcdef.funcname;
-                if(func_isused_Map.get(name) == 1)
+                if(func_isused_Map.get(name) == 1 && name != 'main')
                 {
                     accept('warning', `function ${name} never used`, {node: d.funcdef, property:'funcname'});
                 }
