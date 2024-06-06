@@ -42,6 +42,7 @@ export class Sysy2022Validator {
         this.checkblockitemunique(unit, accept);
         this.gathervaribleinfo(unit, accept);
         this.showvaribleinfo(unit, accept);
+        this.chekcvaribletype(unit, accept);
     }
     UnaryExpTotalValidator(unaryExp:UnaryExp,accept: ValidationAcceptor):void{
         this.checkFuncNameAndParams(unaryExp,accept);
@@ -99,7 +100,7 @@ export class Sysy2022Validator {
                     }
                     else
                     {
-                        accept("error", `variable '${name}' is not declared in this scope`, {node: d, property:'LVarname'})
+                        accept("error", `variable '${name}' is not declared in this scope`, {node: d, property:'LVarname'});
                     }
                 }
             })
@@ -116,6 +117,35 @@ export class Sysy2022Validator {
             })
         }
 
+    }
+
+    chekcvaribletype(unit:CompUnit, accept: ValidationAcceptor): void{
+        if(unit.funcdef)
+        {
+            let var_type_Map = new Map();
+            //搜集类型信息
+            unit.funcdef.blockItem.forEach(d =>{
+                if(d.vardef?.varname)
+                {
+                    let name = d.vardef?.varname;
+                    var_type_Map.set(name, d.btype);
+                }
+            })
+
+            //寻找type是否一致
+            let type = 'int';
+            unit.funcdef.blockItem.forEach(d =>{
+                if(d.LVarname)
+                {
+                    let name = d.LVarname;
+                    if(var_type_Map.get(name) != type)
+                    {
+                        accept('error', `'${name}''s type is not suitable.`, {node:d, property:'blockItem'});
+                    }
+                }
+            })
+
+        }
     }
 
     gatherblockiteminfo(b:BlockItem, accept: ValidationAcceptor): void {

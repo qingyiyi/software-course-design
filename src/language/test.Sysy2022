@@ -4,24 +4,29 @@ int bb(int m, int n)
     //int bbb;
     int cccc;
     float c;
+
+    //作用域检查
+    kk = 1;
+
+    //无用变量
     int a;
+
     //a = 0;
     cccc = 2;
-    c = 1;
-    ccc =1 ;
-    //am = a + c;
+    
+    //类型检查
+    a = a + c;
+
     int a;
     int cccc;
     return 0;
 }
 
-
-
 float cc()
 {
-    int ccc = 0;
-    ccc = 1;
     const int kkk = 0;
+    int ccc;
+    ccc = 1 ;
     int m, n;
     bb(m, n);
     cc();
@@ -37,6 +42,8 @@ int ccc()
     int a;
     int a;
     a=0;
+
+    c = 1;
 }
 
 int cc = 0;
