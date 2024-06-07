@@ -55,7 +55,7 @@ BlockItem:
     ConstDecl |  btype=('int'|'float') VarDecl |(unaryFuncname=[UnaryExp:Ident])? Stmt;
 
 fragment Stmt: 
-    LVal '=' Exp ';' 
+    LVal '=' exp=Exp ';' 
     | (Exp)? ';' 
     | Block 
     | 'if' '(' Cond ')' Stmt ( 'else' Stmt )?

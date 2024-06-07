@@ -16,7 +16,8 @@ int bb(int m, int n)
     cccc = 2;
     
     //类型检查
-    a = a + c;
+    a = a + c + c;
+    a = c + c;
 
     int a;
 
@@ -58,3 +59,9 @@ int ccc()
 }
 
 int cc = 0;
+
+
+
+
+
+
