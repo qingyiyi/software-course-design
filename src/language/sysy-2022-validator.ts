@@ -148,6 +148,19 @@ export class Sysy2022Validator {
                         accept("error", `variable '${name}' is not declared in this scope`, {node: d, property:'LVarname'});
                     }
                 }
+                if(d.exp?.unaryExp.LVarname)
+                {
+                    let name = d.exp.unaryExp.LVarname;
+                    if(var_isused_Map.get(name))
+                    {
+                        var_isused_Map.delete(name);
+                        var_isused_Map.set(name,2);
+                    }
+                    else
+                    {
+                        accept("error", `variable '${name}' is not declared in this scope`, {node: d.exp.unaryExp, property:'LVarname'});
+                    }
+                }
             })
 
             unit.funcdef.blockItem.forEach(d =>{

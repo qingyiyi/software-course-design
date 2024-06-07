@@ -65,3 +65,9 @@ int cc = 0;
 
 
 
+int kkk()
+{
+    int aaa;
+    float ccc;
+    aaa = 1 + ccc;
+}
