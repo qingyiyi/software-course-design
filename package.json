@@ -87,7 +87,8 @@
         ]
     },
     "activationEvents": [
-        "onLanguage:sysy-2022"
+        "onLanguage:sysy-2022",
+        "onCommand:extension.quickFix"
     ],
     "main": "./out/extension/main.cjs",
     "bin": {

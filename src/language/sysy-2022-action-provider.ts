@@ -1,49 +1,153 @@
-import { CodeActionProvider, TextDocument, Range, CodeActionContext, CancellationToken, CodeAction, CodeActionKind, WorkspaceEdit, ExtensionContext, languages } from 'vscode';
+import {  Diagnostic as VscodeDiagnostic,window,CodeActionProvider, TextDocument, Range, CodeActionContext, CancellationToken, CodeAction, CodeActionKind, WorkspaceEdit, 
+    ExtensionContext, languages, workspace, commands } from 'vscode';
 
 export class SysyCodeActionProvider implements CodeActionProvider {
-    public static providedCodeActionKinds = [
-        CodeActionKind.Refactor
+    dispose(): void {
+        console.log('SysyCodeActionProvider is disposed');
+    }
+
+    public static readonly providedCodeActionKinds = [
+        CodeActionKind.QuickFix,
+        CodeActionKind.RefactorRewrite
     ];
+
 
     provideCodeActions(document: TextDocument, range: Range, context: CodeActionContext, token: CancellationToken): CodeAction[] {
         const actions: CodeAction[] = [];
-        console.log('debuginfo(sysy-2022-action-provider.ts): provideCodeActions called, context:', { context });
-        console.log('debuginfo(2): provideCodeActions called, context:', { context },'token:',{token},'textdocument:',{document});
+        
+/******add quickfix******/ 
+    context.diagnostics.forEach(diagnostic => {
+        if (diagnostic.code === 'VarNotDeclared') { // Match the custom error code
+            const fixDeclare = new CodeAction(`Fix: ${diagnostic.message}`, CodeActionKind.QuickFix);
+            fixDeclare.command = { command: 'extension.addDecl', title: 'Apply Quick Fix', arguments: [document, range, diagnostic] };
+            fixDeclare.diagnostics = [diagnostic];
+            fixDeclare.isPreferred = true;
+            actions.push(fixDeclare);
+        }
+        if (diagnostic.code === 'NeverUsed') {
+            const deleteUnusedDeclarationAction = new CodeAction('Delete unused declaration', CodeActionKind.QuickFix);
+            deleteUnusedDeclarationAction.command = { command: 'extension.deleteUnusedDeclaration', title: 'Delete unused declaration', arguments: [document, range] };
+            deleteUnusedDeclarationAction.diagnostics = [diagnostic];
+            deleteUnusedDeclarationAction.isPreferred = true; // Optional: make it the preferred fix
+            actions.push(deleteUnusedDeclarationAction);
+        }
+        // if (diagnostic.code === 'NotSuitableType') {
+        //     const fixTypeAction = new CodeAction('Change to float', CodeActionKind.QuickFix);
+        //     fixTypeAction.command = { command: 'extension.changeToFloat', title: 'Change to float', arguments: [document, range] };
+        //     fixTypeAction.diagnostics = [diagnostic];
+        //     fixTypeAction.isPreferred = true; // Optional: make it the preferred fix
+        //     actions.push(fixTypeAction);
+        // }
+    });
+/******add quickfix end******/ 
 
         // 提供重构操作：重命名变量
-        const refactorAction = this.createRenameVariableAction(document, range, 'Refactor: Rename variable');
-        actions.push(refactorAction);
-
+        const selectedText = document.getText(range);
+        const regex = /^[a-zA-Z_$][a-zA-Z_$0-9]*$/;
+        // Check if the selected text is a valid variable name
+        if (regex.test(selectedText)) {
+            const renameAction = new CodeAction('Rename Variable', CodeActionKind.RefactorRewrite);
+            renameAction.command = { command: 'extension.renameVariable', title: 'Rename Variable', arguments: [document, range, selectedText] };
+            actions.push(renameAction);
+        }
         return actions;
     }
 
-    private createRenameVariableAction(document: TextDocument, range: Range, title: string): CodeAction {
-        const action = new CodeAction(title, CodeActionKind.Refactor);
-        action.edit = new WorkspaceEdit();
-        
-        // 获取变量名称并生成新名称（此处简单示例为在变量名后加 "_new"）
-        const oldVariableName = document.getText(range);
-        const newVariableName = `${oldVariableName}_new`;
-        console.log('debuginfo(cr): createRenameVariableAction called, TextDocument:', { document },'oldVariableName:',{oldVariableName},'newVariableName:',{newVariableName});
-        // 在变量定义和使用位置进行替换
-        const text = document.getText();
-        const regex = new RegExp(`\\b${oldVariableName}\\b`, 'g');
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-            const matchRange = new Range(
-                document.positionAt(match.index),
-                document.positionAt(match.index + oldVariableName.length)
-            );
-            action.edit.replace(document.uri, matchRange, newVariableName);
-        }
-        return action;
-    }
+/******【如果快速修复比较复杂，在此处实现函数】******/ 
+
+/******add quickfix end******/ 
 
 }
-    // 在 activate 函数中注册 CodeActionProvider
-    export function activateCodeActionProvider(context: ExtensionContext) {
-        // 创建 SysyCodeActionProvider 实例
-        const codeActionProvider = new SysyCodeActionProvider();
-        console.log(typeof(languages.registerCodeActionsProvider('sysy-2022', codeActionProvider)));
-        return languages.registerCodeActionsProvider('sysy-2022', codeActionProvider);
-    }
+
+export function activateCodeActionProvider(context: ExtensionContext) {
+    const provider = new SysyCodeActionProvider();
+    const disposable = languages.registerCodeActionsProvider('sysy-2022', provider, {
+        providedCodeActionKinds: SysyCodeActionProvider.providedCodeActionKinds
+    });
+
+/******add quickfix******/ 
+    // 此处均为对快速修复的注册（实现）
+    context.subscriptions.push(commands.registerCommand('extension.addDecl', async (document: TextDocument, range: Range, diagnostic: VscodeDiagnostic) => {
+        const edit = new WorkspaceEdit();
+        // const variableName = document.getText(range);
+        const startPos = range.start;
+        const floatPrefix = 'float ';
+
+        edit.insert(document.uri, startPos, floatPrefix);
+        await workspace.applyEdit(edit);
+    }));
+
+    // context.subscriptions.push(commands.registerCommand('extension.changeToFloat', async (document: TextDocument, range: Range) => {
+    //     const edit = new WorkspaceEdit();
+        
+    //     // Replace the current text with 'float'
+    //     edit.replace(document.uri, range, 'float');
+
+    //     await workspace.applyEdit(edit);
+    // }));
+
+    // Register the command for deleting unused declaration
+    context.subscriptions.push(commands.registerCommand('extension.deleteUnusedDeclaration', async (document: TextDocument, range: Range) => {
+        const edit = new WorkspaceEdit();
+
+        // Find the full line of the declaration
+        const line = document.lineAt(range.start.line);
+        const text = line.text.trim();
+
+        // Different cases for single variable, multiple variables, with/without initialization
+        const variablePattern = /(?:int|float|const)\s+([^;]+);/;
+        const match = variablePattern.exec(text);
+
+        if (match) {
+            const declarations = match[1].split(',').map(declaration => declaration.trim());
+
+            // Remove the unused variable from the list of declarations
+            const updatedDeclarations = declarations.filter(declaration => {
+                const varName = declaration.split('=')[0].trim();
+                return varName !== document.getText(range);
+            });
+
+            // Reconstruct the declaration line
+            if (updatedDeclarations.length > 0) {
+                const updatedText = `${text.split(' ')[0]} ${updatedDeclarations.join(', ')};`;
+                edit.replace(document.uri, line.range, updatedText);
+            } else {
+                // If no declarations are left, delete the entire line
+                edit.delete(document.uri, line.range);
+            }
+        }
+
+        await workspace.applyEdit(edit);
+    }));
+/******add quickfix end******/ 
+
+    context.subscriptions.push(disposable);
+
+    context.subscriptions.push({
+        dispose: () => provider.dispose()
+    });
+
+    context.subscriptions.push(commands.registerCommand('extension.renameVariable', async (document: TextDocument, range: Range, oldName: string) => {
+        const newName = await window.showInputBox({
+            prompt: `Rename variable '${oldName}' to:`,
+            value: oldName
+        });
+
+        if (!newName || newName === oldName) {
+            return;
+        }
+
+        const edit = new WorkspaceEdit();
+        const text = document.getText();
+        const regex = new RegExp(`\\b${oldName}\\b`, 'g');
+        let match;
+
+        while ((match = regex.exec(text)) !== null) {
+            const startPos = document.positionAt(match.index);
+            const endPos = document.positionAt(match.index + oldName.length);
+            edit.replace(document.uri, new Range(startPos, endPos), newName);
+        }
+
+        await workspace.applyEdit(edit);
+    }));
+}

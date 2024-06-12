@@ -9,8 +9,10 @@ let codeActionProvider:Object;
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
     client = startLanguageClient(context);
-    codeActionProvider = activateCodeActionProvider(context);
-    //activateCodeActionProvider(context);
+    //codeActionProvider = activateCodeActionProvider(context);
+    //context.subscriptions.push(codeActionProvider);
+    activateCodeActionProvider(context);
+
 }
 
 // This function is called when the extension is deactivated.

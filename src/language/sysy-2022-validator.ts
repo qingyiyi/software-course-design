@@ -145,7 +145,25 @@ export class Sysy2022Validator {
                     }
                     else
                     {
-                        accept("error", `variable '${name}' is not declared in this scope`, {node: d, property:'LVarname'});
+                        accept("error", `variable '${name}' is not declared in this scope`,
+                         {
+                            node: d, 
+                            property:'LVarname',
+                            code:'VarNotDeclared'
+                        });
+                    }
+                }
+                if(d.exp?.unaryExp.LVarname)
+                {
+                    let name = d.exp.unaryExp.LVarname;
+                    if(var_isused_Map.get(name))
+                    {
+                        var_isused_Map.delete(name);
+                        var_isused_Map.set(name,2);
+                    }
+                    else
+                    {
+                        accept("error", `variable '${name}' is not declared in this scope`, {node: d.exp.unaryExp, property:'LVarname'});
                     }
                 }
             })
@@ -156,7 +174,13 @@ export class Sysy2022Validator {
                     let name = d.vardef?.varname;
                     if(var_isused_Map.get(name) == 1)
                     {
-                        accept("warning", "this varible is never used", {node: d.vardef, property: 'varname'})
+                        accept("warning", "this varible is never used", 
+                        {
+                            node: d.vardef, 
+                            property: 'varname',
+                            code:'NeverUsed'
+                        }
+                        )
                     }
                 }
             })
@@ -183,9 +207,30 @@ export class Sysy2022Validator {
                 if(d.LVarname)
                 {
                     let name = d.LVarname;
-                    if(var_type_Map.get(name) && var_type_Map.get(name) != type)
+                    if(var_type_Map.has(name))
                     {
-                        accept('error', `variable ${name}'s type is not suitable.`, {node:d, property:'blockItem'});
+                        //accept('error', `variable ${name} ${var_type_Map.get(name)}`, {node:d, property:'blockItem'});
+                        if(var_type_Map.get(name) != type)
+                        {
+                            accept('error', `variable ${name}'s type is not suitable.`, 
+                            {
+                                node:d, 
+                                property:'LVarname',
+                                code:'NotSuitableType'
+                        });
+                        }
+                    }
+                }
+                if(d.exp?.unaryExp.LVarname)
+                {
+                    let name = d.exp.unaryExp.LVarname;
+                    if(var_type_Map.has(name))
+                    {
+                        //accept('error', `variable ${name} ${var_type_Map.get(name)}`, {node:d, property:'blockItem'});
+                        if(var_type_Map.get(name) != type)
+                        {
+                            accept('error', `variable ${name}'s type is not suitable.`, {node:d.exp.unaryExp, property:'LVarname'});
+                        }
                     }
                 }
             })
@@ -202,6 +247,10 @@ export class Sysy2022Validator {
                 if(b.btype) type = b.btype;
                 let name = b.vardef.varname;
                 let description = name + " is " + type + " variable ";
+                if(var_attribute_Map.get(name))
+                {
+                    var_attribute_Map.delete(name);
+                }
                 var_attribute_Map.set(name, description);
                 //accept('warning', `${description}`, {node: b, property: 'vardef'});
             }
@@ -220,10 +269,10 @@ export class Sysy2022Validator {
         })
         unit.funcdef?.blockItem.forEach(d =>
         {
-            if(d.unaryFuncname)
+            if(d.unaryExp?.unaryFuncname)
             {
-                let description = var_attribute_Map.get(d.unaryFuncname);
-                accept('info', `${description}`, {node: d, property: 'unaryFuncname'});
+                let description = var_attribute_Map.get(d.unaryExp.unaryFuncname);
+                accept('info', `${description}`, {node: d.unaryExp, property: 'unaryFuncname'});
             }
         })
     }
@@ -305,12 +354,12 @@ export class Sysy2022Validator {
                     canshuMap.delete(funcname);
                     canshuMap.set(funcname,params);
                 }
-                accept('info', `debuginfo name:'${unit.funcname}' params:'${params}'`, {node: unit, property: 'funcname'});
+                //accept('info', `debuginfo name:'${unit.funcname}' params:'${params}'`, {node: unit, property: 'funcname'});
             }
             // 函数名不在参数列表中，将名和参数列表加入到map中
             else{
                 canshuMap.set(funcname,params);
-                accept('info', `debuginfo name:'${unit.funcname}' params:'${params}'`, {node: unit, property: 'funcname'});
+                //accept('info', `debuginfo name:'${unit.funcname}' params:'${params}'`, {node: unit, property: 'funcname'});
             }
         }
     }
