@@ -69,11 +69,18 @@ export function activateCodeActionProvider(context: ExtensionContext) {
     // 此处均为对快速修复的注册（实现）
     context.subscriptions.push(commands.registerCommand('extension.addDecl', async (document: TextDocument, range: Range, diagnostic: VscodeDiagnostic) => {
         const edit = new WorkspaceEdit();
-        // const variableName = document.getText(range);
+        // Prompt the user to select the type of declaration
+        const type = await window.showQuickPick(['int', 'float'], {
+            placeHolder: 'Select the type of declaration to add'
+        });
+        if (!type) {
+            // If no type is selected, do nothing
+            return;
+        }
         const startPos = range.start;
-        const floatPrefix = 'float ';
+        const typePrefix = `${type} `;
 
-        edit.insert(document.uri, startPos, floatPrefix);
+        edit.insert(document.uri, startPos, typePrefix);
         await workspace.applyEdit(edit);
     }));
 
