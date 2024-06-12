@@ -2,18 +2,25 @@ import type { LanguageClientOptions, ServerOptions} from 'vscode-languageclient/
 import type * as vscode from 'vscode';
 import * as path from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
+import {  activateCodeActionProvider } from '../language/sysy-2022-action-provider.js';
 
 let client: LanguageClient;
-
+let codeActionProvider:Object;
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
     client = startLanguageClient(context);
+    codeActionProvider = activateCodeActionProvider(context);
+    //activateCodeActionProvider(context);
 }
 
 // This function is called when the extension is deactivated.
 export function deactivate(): Thenable<void> | undefined {
     if (client) {
         return client.stop();
+    }
+    if(codeActionProvider){
+        codeActionProvider=new Object;
+        return;
     }
     return undefined;
 }
