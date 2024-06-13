@@ -3,7 +3,7 @@ import {  Diagnostic as VscodeDiagnostic,window,CodeActionProvider, TextDocument
 
 export class SysyCodeActionProvider implements CodeActionProvider {
     dispose(): void {
-        console.log('SysyCodeActionProvider is disposed');
+        //console.log('SysyCodeActionProvider is disposed');
     }
 
     public static readonly providedCodeActionKinds = [
